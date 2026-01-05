@@ -1,0 +1,44 @@
+{
+	"name": "ESP-IDF QEMU",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"idf.espIdfPath": "/opt/esp/idf",
+				"idf.toolsPath": "/opt/esp",
+				"idf.gitPath": "/usr/bin/git",
+				"idf.showWelcome": false
+			},
+			"extensions": [
+				"espressif.esp-idf-extension",
+				"espressif.esp-idf-web",
+				"ms-vscode.cpptools",
+				"ms-vscode.cpptools-extension-pack",
+				"redhat.vscode-yaml",
+				"esbenp.prettier-vscode"
+			]
+		}
+	},
+	"runArgs": [
+		"--name=hellocubic-openfirmware-dev",
+		"--hostname=hellocubic-openfirmware-dev",
+		"-v",
+		"${env:HOME}/.ssh:/home/ubuntu/.ssh:ro",
+		"-v",
+		"${env:HOME}/.gnupg:/home/ubuntu/.gnupg:ro",
+		"-v",
+		"/run/udev:/run/udev",
+		"-v",
+		"/etc/localtime:/etc/localtime:ro",
+		"-v",
+		"/dev:/dev",
+		"--device-cgroup-rule=c 166:* rmw",
+		"--device-cgroup-rule=c 188:* rmw"
+	],
+	"remoteEnv": {
+		"CMAKE_GENERATOR": "Ninja"
+	}
+}

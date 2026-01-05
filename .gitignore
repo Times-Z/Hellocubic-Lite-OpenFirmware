@@ -1,0 +1,40 @@
+# Ignore build artifacts
+/build/
+/components/
+/managed_components/
+*.bin
+*.elf
+*.map
+*.o
+*.d
+
+# Ignore CMake files
+/CMakeCache.txt
+/CMakeFiles/
+*.cmake
+build.ninja
+
+# Ignore Python-related files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Ignore firmware flashing files
+flash_args
+partitions.bin
+sdkconfig
+sdkconfig.old
+
+# Ignore generated dependencies and configuration
+idf.py*
+*.bak
+
+!backup/*.bin
