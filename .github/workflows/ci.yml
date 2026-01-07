@@ -50,6 +50,35 @@ jobs:
           fi
           find src include -name '*.cpp' -o -name '*.h' | xargs clang-tidy -p "$db_path" --warnings-as-errors='*' --quiet || true
 
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install clang-tidy
+        run: sudo apt-get update && sudo apt-get install -y clang-tidy
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install compatible click
+        run: pip install 'click<8.1.0' # prevent conflicts with PlatformIO
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Run analysis
+        run: |
+          pio check
+
   build:
     name: Build with PlatformIO
     needs: lint
