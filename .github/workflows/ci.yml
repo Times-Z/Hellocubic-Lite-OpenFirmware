@@ -34,7 +34,7 @@ jobs:
 
   build:
     name: Build with PlatformIO
-    needs: lint
+    needs: static-analysis
     runs-on: ubuntu-latest
 
     steps:
