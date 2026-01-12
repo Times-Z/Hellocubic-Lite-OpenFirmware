@@ -2,7 +2,6 @@ function rebootHandler() {
   return {
     loading: false,
     message: "",
-
     async reboot() {
       this.loading = true;
       this.message = "Rebooting...";
@@ -22,7 +21,6 @@ function rebootHandler() {
     },
   };
 }
-
 function themeSwitcher() {
   function getSVGElements() {
     return {
@@ -38,33 +36,24 @@ function themeSwitcher() {
 
   function playWaterDropTransition(event, nextTheme) {
     const { overlay } = getSVGElements();
-
     if (!overlay) return;
-
     const startX = window.innerWidth;
     const startY = 0;
-
     const endX = 0;
     const endY = window.innerHeight;
-
     const maxRadius = Math.sqrt(
       window.innerWidth ** 2 + window.innerHeight ** 2
     );
-
     const bg = nextTheme === "dark" ? "#111" : "#fff";
     overlay.style.setProperty("--theme-waterdrop-bg", bg);
-
     overlay.style.clipPath = `circle(0% at ${startX}px ${startY}px)`;
     overlay.classList.add("active");
     overlay.style.opacity = "1";
-
     void overlay.offsetWidth;
-
     overlay.style.transition = "clip-path 0.7s cubic-bezier(.4,0,.2,1)";
     overlay.style.clipPath = `circle(${
       maxRadius + 50
     }px at ${endX}px ${endY}px)`;
-
     setTimeout(() => {
       document.documentElement.setAttribute("data-theme", nextTheme);
       localStorage.setItem("picoPreferredColorScheme", nextTheme);
@@ -153,6 +142,57 @@ function themeSwitcher() {
   };
 }
 
+function otaUploadHandler() {
+  return {
+    uploading: false,
+    uploadMessage: "",
+    uploadType: "firmware",
+
+    async uploadFile() {
+      const fileInput = this.$refs.fileInput;
+      if (!fileInput.files.length) {
+        this.uploadMessage = "Please select a file";
+
+        return;
+      }
+
+      const file = fileInput.files[0];
+      if (!file.name.toLowerCase().endsWith(".bin")) {
+        this.uploadMessage = "Only .bin files are allowed";
+
+        return;
+      }
+      const endpoint =
+        this.uploadType === "firmware" ? "/api/v1/ota/fw" : "/api/v1/ota/fs";
+
+      this.uploading = true;
+      this.uploadMessage = "";
+
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        const res = await fetch(endpoint, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (res.ok) {
+          const data = await res.json().catch(() => ({}));
+          this.uploadMessage = data.message;
+        } else {
+          const err = await res.text();
+          this.uploadMessage = "Error: " + err;
+        }
+      } catch (e) {
+        this.uploadMessage = "Error: " + e;
+      }
+
+      this.uploading = false;
+    },
+  };
+}
+
 document.addEventListener("alpine:init", () => {
   Alpine.data("themeSwitcher", themeSwitcher);
+  Alpine.data("otaUploadHandler", otaUploadHandler);
 });

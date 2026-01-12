@@ -3,15 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Hellocubic Open Firmware</title>
+    <title>Update - Hellocubic</title>
     <link rel="stylesheet" href="./css/pico.min.css" />
     <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
     <main class="container">
       <header>
-        <h1>Hellocubic Open Firmware</h1>
-
+        <h1>Firmware / FS Update</h1>
         <div x-data="themeSwitcher()">
           <button
             @click="toggleTheme"
@@ -76,34 +75,25 @@
           </button>
         </div>
         <div id="theme-waterdrop-overlay"></div>
+        <a href="./index.html" style="margin-left: 2em">← Back to Home</a>
       </header>
-
       <section>
-
-
-        <div style="margin-top:2em">
-          <a href="./update.html">
-            <button type="button" class="secondary">Firmware / FS Update</button>
-          </a>
-            </button>
-          </a>
+        <div x-data="otaUploadHandler()" style="margin-top: 2em">
+          <h2>Update firmware or FS</h2>
+          <form @submit.prevent="uploadFile">
+            <input type="file" x-ref="fileInput" required accept=".bin" />
+            <select x-model="uploadType">
+              <option value="firmware">Firmware</option>
+              <option value="fs">LittleFS (html/js/css/config)</option>
+            </select>
+            <button type="submit" x-bind:disabled="uploading">Upload</button>
+          </form>
+          <template x-if="uploading">
+            <span aria-busy="true" style="margin-left: 1em">Uploading...</span>
+          </template>
+          <p x-text="uploadMessage"></p>
         </div>
-
-        <div x-data="rebootHandler()">
-          <button
-            class="contrast"
-            x-bind:disabled="loading"
-            x-on:click="reboot"
-          >
-            Reboot
-          </button>
-          <p x-text="message"></p>
-        </div>
-
-        <script src="./js/alpinejs.min.js" defer></script>
-        <script src="./js/main.js"></script>
       </section>
-
       <footer>
         <small>
           <a
@@ -111,8 +101,11 @@
             target="_blank"
           >
             Hellocubic Open Firmware
-          </a></small>
+          </a>
+        </small>
       </footer>
     </main>
+    <script src="./js/alpinejs.min.js" defer></script>
+    <script src="./js/main.js"></script>
   </body>
 </html>

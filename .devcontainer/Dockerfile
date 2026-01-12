@@ -47,6 +47,7 @@ RUN curl -fsSL -o get-platformio.py https://raw.githubusercontent.com/platformio
     && python3 get-platformio.py \
     && rm get-platformio.py \
     && echo "alias build='pio run'" >> /home/${USER}/.bashrc \
+    && echo "alias buildfs='pio run --target buildfs'" >> /home/${USER}/.bashrc \
     && echo "alias flash='pio run --target upload'" >> /home/${USER}/.bashrc \
     && echo "alias flashfs='pio run --target uploadfs'" >> /home/${USER}/.bashrc \
     && echo "alias check='pio check'" >> /home/${USER}/.bashrc \

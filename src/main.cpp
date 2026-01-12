@@ -54,6 +54,9 @@ void setup() {
     registerApiEndpoints(webserver);
 
     webserver->serveStatic("/", "/web/index.html", "text/html");
+    webserver->serveStatic("/index.html", "/web/index.html", "text/html");
+    webserver->serveStatic("/update.html", "/web/update.html", "text/html");
+
     webserver->serveStatic("/css/pico.min.css", "/web/css/pico.min.css", "text/css");
     webserver->serveStatic("/css/style.css", "/web/css/style.css", "text/css");
     webserver->serveStatic("/js/alpinejs.min.js", "/web/js/alpinejs.min.js", "application/javascript");
