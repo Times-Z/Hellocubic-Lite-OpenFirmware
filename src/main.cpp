@@ -18,6 +18,10 @@ WiFiManager* wifiManager = nullptr;
 
 static constexpr uint32_t SERIAL_BAUD_RATE = 115200;
 static constexpr uint32_t BOOT_DELAY_MS = 200;
+static constexpr int LOADING_BAR_TEXT_X = 50;
+static constexpr int LOADING_BAR_TEXT_Y = 80;
+static constexpr int LOADING_BAR_Y = 110;
+static constexpr int LOADING_DELAY_MS = 1000;
 
 Webserver* webserver = nullptr;
 
@@ -31,25 +35,45 @@ void setup() {
     Serial.println("");
     Logger::info(("HelloCubic Lite Open Firmware " + String(PROJECT_VER_STR)).c_str());
 
+    constexpr int TOTAL_STEPS = 5;
+    int step = 0;
+
     if (!LittleFS.begin()) {
+        if (DisplayManager::isReady()) {
+            DisplayManager::drawLoadingBar((float)step / TOTAL_STEPS, LOADING_BAR_Y);
+        }
         Logger::error("Failed to mount LittleFS");
         return;
     }
 
+    step++;
+
     if (configManager.load()) {
         Logger::info("Configuration loaded successfully");
     }
+    step++;
 
     DisplayManager::begin();
     if (DisplayManager::isReady()) {
-        DisplayManager::drawStartup();
+        DisplayManager::drawTextWrapped(LOADING_BAR_TEXT_X, LOADING_BAR_TEXT_Y, "Starting...", 2, LCD_WHITE, LCD_BLACK,
+                                        true);
+        DisplayManager::drawLoadingBar((float)step / TOTAL_STEPS, LOADING_BAR_Y);
     }
+    step++;
 
     wifiManager = new WiFiManager(configManager.getSSID(), configManager.getPassword(), AP_SSID, AP_PASSWORD);
     wifiManager->begin();
+    if (DisplayManager::isReady()) {
+        DisplayManager::drawLoadingBar((float)step / TOTAL_STEPS, LOADING_BAR_Y);
+    }
+    step++;
 
     webserver = new Webserver();
     webserver->begin();
+    if (DisplayManager::isReady()) {
+        DisplayManager::drawLoadingBar((float)step / TOTAL_STEPS, LOADING_BAR_Y);
+    }
+    step++;
 
     registerApiEndpoints(webserver);
 
@@ -64,6 +88,14 @@ void setup() {
     webserver->serveStatic("/css/style.css", "/web/css/style.css", "text/css");
     webserver->serveStatic("/js/alpinejs.min.js", "/web/js/alpinejs.min.js", "application/javascript");
     webserver->serveStatic("/js/main.js", "/web/js/main.js", "application/javascript");
+
+    if (DisplayManager::isReady()) {
+        DisplayManager::drawLoadingBar(1.0F, LOADING_BAR_Y);
+    }
+
+    delay(LOADING_DELAY_MS);
+
+    DisplayManager::drawStartup();
 }
 
 void loop() {

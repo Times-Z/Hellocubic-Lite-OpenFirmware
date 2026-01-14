@@ -33,13 +33,6 @@ static constexpr uint32_t LCD_BEGIN_DELAY_MS = 10;
 static constexpr int16_t DISPLAY_PADDING = 10;
 static constexpr int16_t DISPLAY_INFO_Y = 100;
 
-// Colors definitions
-static constexpr uint16_t LCD_BLACK = 0x0000;
-static constexpr uint16_t LCD_WHITE = 0xFFFF;
-static constexpr uint16_t LCD_RED = 0xF800;
-static constexpr uint16_t LCD_GREEN = 0x07E0;
-static constexpr uint16_t LCD_BLUE = 0x001F;
-
 // Screen cmd
 static constexpr uint8_t ST7789_SLEEP_DELAY_MS = 120;
 static constexpr uint8_t ST7789_SLEEP_OUT = 0x11;
@@ -645,4 +638,37 @@ auto DisplayManager::drawStartup() -> void {
 void DisplayManager::drawTextWrapped(int16_t xPos, int16_t yPos, const String& text, uint8_t textSize, uint16_t fgColor,
                                      uint16_t bgColor, bool clearBg) {
     lcdDrawTextWrapped(xPos, yPos, text, textSize, fgColor, bgColor, clearBg);
+}
+
+/**
+ * @brief Draw a loading bar on the display
+ *
+ * @param progress Progress value between 0.0 (empty) and 1.0 (full)
+ * @param yPos Y coordinate of the top of the loading bar
+ * @param barWidth Width of the loading bar in pixels
+ * @param barHeight Height of the loading bar in pixels
+ * @param fgColor Foreground color (16-bit RGB565)
+ * @param bgColor Background color (16-bit RGB565)
+ */
+void DisplayManager::drawLoadingBar(float progress, int yPos, int barWidth, int barHeight, uint16_t fgColor,
+                                    uint16_t bgColor) {
+    if ((g_lcd == nullptr) || (!g_lcdReady)) {
+        return;
+    }
+
+    auto barXPos = (static_cast<int32_t>(LCD_W) - static_cast<int32_t>(barWidth)) / 2;
+    auto barXPos16 = static_cast<int16_t>(barXPos);
+    auto yPos16 = static_cast<int16_t>(yPos);
+    auto barWidth16 = static_cast<int16_t>(barWidth);
+    auto barHeight16 = static_cast<int16_t>(barHeight);
+
+    g_lcd->fillRect(barXPos16, yPos16, barWidth16, barHeight16, bgColor);
+
+    auto fillWidthF = static_cast<float>(barWidth) * progress;
+    auto fillWidth16 = static_cast<int16_t>(fillWidthF);
+    if (fillWidth16 > 0) {
+        g_lcd->fillRect(barXPos16, yPos16, fillWidth16, barHeight16, fgColor);
+    }
+
+    yield();
 }
