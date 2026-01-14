@@ -46,7 +46,7 @@ WORKDIR /home/debian
 RUN curl -fsSL -o get-platformio.py https://raw.githubusercontent.com/platformio/platformio-core-installer/master/get-platformio.py \
     && python3 get-platformio.py \
     && rm get-platformio.py \
-    && pip install esptool \
+    && pip install esptool --break-system-packages  \
     && echo "alias build='pio run'" >> /home/${USER}/.bashrc \
     && echo "alias buildfs='pio run --target buildfs'" >> /home/${USER}/.bashrc \
     && echo "alias flash='pio run --target upload'" >> /home/${USER}/.bashrc \

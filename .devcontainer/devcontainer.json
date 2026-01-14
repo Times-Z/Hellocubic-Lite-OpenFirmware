@@ -18,8 +18,8 @@
 		}
 	},
 	"runArgs": [
-		"--name=hellocubic-openfirmware-dev",
-		"--hostname=hellocubic-openfirmware-dev",
+		"--name=geekmagic-openfirmware-dev",
+		"--hostname=geekmagic-openfirmware-dev",
 		"-v",
 		"${env:HOME}/.ssh:/home/debian/.ssh:ro",
 		"-v",
