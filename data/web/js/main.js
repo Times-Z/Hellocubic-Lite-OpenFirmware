@@ -12,6 +12,30 @@ function humanFileSize(bytes) {
 
 function gifUploadHandler() {
   return {
+    async playGifFullscreen(gifName) {
+      try {
+        await fetch(`/api/v1/gif/play`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: gifName }),
+        });
+      } catch (e) {
+        alert("Error when playing gif: " + e);
+      }
+    },
+
+    async stopGif() {
+      try {
+        const res = await fetch(`/api/v1/gif/stop`, { method: "POST" });
+        if (!res.ok) {
+          const txt = await res.text().catch(() => "");
+          alert("Failed to stop GIF: " + txt);
+        }
+      } catch (e) {
+        alert("Error when stopping gif: " + e);
+      }
+    },
+
     humanFileSize,
     uploading: false,
     uploadMessage: "",

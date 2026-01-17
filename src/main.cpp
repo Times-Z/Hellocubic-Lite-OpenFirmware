@@ -9,7 +9,7 @@
 #include "wireless/WiFiManager.h"
 #include "display/DisplayManager.h"
 #include "web/Webserver.h"
-#include "web/api.h"
+#include "web/Api.h"
 
 ConfigManager configManager;
 const char* AP_SSID = "GeekMagic";
@@ -102,4 +102,5 @@ void loop() {
     if (webserver != nullptr) {
         webserver->handleClient();
     }
+    DisplayManager::update();
 }

@@ -28,6 +28,9 @@
 
           <section style="margin-top: 2em">
             <h3>GIFs on device</h3>
+            <div style="margin-bottom: 0.5em">
+              <button @click="stopGif()">Stop playback</button>
+            </div>
             <div x-show="gifListLoaded">
               <p>
                 <strong>Used:</strong> <span x-text="usedBytesHR"></span> /
@@ -45,6 +48,12 @@
                       x-text="humanFileSize(gif.size)"
                     ></span
                     >)
+                    <button
+                      @click="playGifFullscreen(gif.name)"
+                      style="margin-left: 1em"
+                    >
+                      Play fullscreen
+                    </button>
                   </li>
                 </template>
               </ul>

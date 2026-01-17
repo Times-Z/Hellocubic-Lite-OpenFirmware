@@ -5,6 +5,9 @@
 #include "display/DisplayManager.h"
 #include "display/GeekMagicSPIBus.h"
 #include "config/ConfigManager.h"
+#include "display/Gif.h"
+
+static Gif s_gif;
 
 extern ConfigManager configManager;
 
@@ -81,6 +84,13 @@ static constexpr uint8_t ST7789_ADDR_START_HIGH = 0x00;
 static constexpr uint8_t ST7789_ADDR_START_LOW = 0x00;
 static constexpr uint8_t ST7789_ADDR_END_HIGH = 0x00;
 static constexpr uint8_t ST7789_ADDR_END_LOW = 0xEF;
+
+/**
+ * @brief Get the Arduino_GFX instance used for the LCD
+ *
+ * @return Pointer to the Arduino_GFX instance
+ */
+auto DisplayManager::getGfx() -> Arduino_GFX* { return g_lcd; }
 
 /**
  * @brief Turn the LCD backlight on
@@ -668,4 +678,77 @@ void DisplayManager::drawLoadingBar(float progress, int yPos, int barWidth, int 
     }
 
     yield();
+}
+
+/**
+ * @brief Play a single GIF file in full screen mode (blocking)
+ *
+ * @param path Path to the GIF file on LittleFS
+ * @param timeMs Duration to play the GIF in milliseconds (0 = play full GIF)
+ * @return true if played successfully, false on error
+ */
+auto DisplayManager::playGifFullScreen(const String& path, uint32_t timeMs) -> bool {
+    if (!s_gif.begin()) {
+        return false;
+    }
+
+    DisplayManager::clearScreen();
+
+    s_gif.setLoopEnabled(timeMs == 0);
+
+    const bool started = s_gif.playOne(path);
+    if (!started) {
+        return false;
+    }
+
+    if (timeMs == 0) {
+        return true;
+    }
+
+    const uint32_t startMs = millis();
+    const uint32_t endMs = startMs + timeMs;
+
+    while (s_gif.isPlaying() && static_cast<int32_t>(millis() - endMs) < 0) {
+        s_gif.update();
+        yield();
+    }
+
+    if (s_gif.isPlaying()) {
+        s_gif.stop();
+    }
+
+    while (s_gif.isPlaying()) {
+        s_gif.update();
+        yield();
+    }
+
+    s_gif.setLoopEnabled(false);
+
+    return true;
+}
+
+/**
+ * @brief Stop GIF playback if playing
+ *
+ * @return true
+ */
+auto DisplayManager::stopGif() -> bool {
+    s_gif.stop();
+
+    DisplayManager::clearScreen();
+
+    return true;
+}
+
+auto DisplayManager::update() -> void { s_gif.update(); }
+
+/**
+ * @brief Clear the entire display to black
+ *
+ * @return void
+ */
+auto DisplayManager::clearScreen() -> void {
+    if (g_lcdReady && g_lcd != nullptr) {
+        g_lcd->fillScreen(LCD_BLACK);
+    }
 }

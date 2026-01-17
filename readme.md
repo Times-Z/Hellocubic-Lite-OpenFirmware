@@ -31,6 +31,7 @@
 
 <div align="center">
    <img src=".github/assets/01-showcase.jpg" alt="HelloCubic Lite Showcase" width="1000" />
+   <a href="https://www.youtube.com/watch?v=ga3Aeqo_rWA" target="_blank" ><img src=".github/assets/01-showcase.gif" alt="HelloCubic Lite Showcase" width="1000" /></a>
    <br>
     <em>open firmware showcase working on both hellocubic and smalltv</em>
 </div>
