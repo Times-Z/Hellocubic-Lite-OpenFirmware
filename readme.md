@@ -212,7 +212,7 @@ You can edit this JSON file to configure your firmware, for example by modifying
 ### 3. Build the firmware and filesystem
 
 ```bash
-pio run --target buildfs
+pio run && pio run --target buildfs
 
 # or using devcontainer aliases
 
