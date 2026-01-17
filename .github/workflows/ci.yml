@@ -85,7 +85,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-output
-          path: .pio
+          path: .pio/
           merge-multiple: true
 
       - name: Install semantic-release and plugins
