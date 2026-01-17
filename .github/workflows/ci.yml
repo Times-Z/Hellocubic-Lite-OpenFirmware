@@ -58,15 +58,6 @@ jobs:
       - name: Build firmware and filesystem
         run: pio run && pio run --target buildfs
 
-      - name: List .pio contents
-        run: |
-          echo 'Listing .pio directory:'
-          if [ -d .pio ]; then
-            find .pio -maxdepth 6 -type f -print || true
-          else
-            echo '.pio directory not found'
-          fi
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
